@@ -1,7 +1,7 @@
 #![feature(min_specialization)]
 use core::ops::Deref;
 
-use heapless::Vec;
+pub use heapless;
 
 #[derive(Debug)]
 pub struct Layout {
@@ -9,11 +9,11 @@ pub struct Layout {
     pub size: usize,
 }
 pub trait GetLayout {
-    fn get_layout<const N: usize>(&self, layout: &mut Vec<Layout, N>);
+    fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>);
 }
 
 impl<T> GetLayout for T {
-    default fn get_layout<const N: usize>(&self, layout: &mut Vec<Layout, N>) {
+    default fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
         layout
             .push(Layout {
                 address: self as *const _ as usize,
@@ -23,13 +23,15 @@ impl<T> GetLayout for T {
     }
 }
 
-// #[cfg(test)]
+#[cfg(test)]
 mod test {
     use crate::*;
+    use heapless::Vec;
     #[test]
     fn test_u32() {
         let data: u32 = 32;
         let mut layout: Vec<Layout, 8> = Vec::new();
+        data.get_layout(&mut layout);
 
         assert!(layout[0].size == 4)
     }
