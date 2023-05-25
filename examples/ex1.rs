@@ -27,7 +27,7 @@ impl<T, U> GetLayout for T
 where
     T: Deref<Target = U>,
 {
-    default fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
+    fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
         println!("--- Deref -- ");
         layout
             .push(Layout {
@@ -51,6 +51,20 @@ impl Deref for Proxy {
         unsafe { &*(0x1000 as *const RegisterBlock) }
     }
 }
+
+struct Resources {
+    a: u32,
+    b: Proxy,
+}
+
+impl GetLayout for Resources {
+    fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
+        println!("--- resources-- ");
+        self.a.get_layout(layout);
+        self.b.get_layout(layout);
+    }
+}
+
 use heapless::Vec;
 fn main() {
     let d = Proxy {};
@@ -63,6 +77,11 @@ fn main() {
     println!("{:?}", layout);
 
     let d = 0u32;
+    let mut layout: Vec<Layout, 8> = Vec::new();
+    d.get_layout(&mut layout);
+    println!("{:?}", layout);
+
+    let d = Resources { a: 0, b: Proxy {} };
     let mut layout: Vec<Layout, 8> = Vec::new();
     d.get_layout(&mut layout);
     println!("{:?}", layout);
