@@ -1,3 +1,4 @@
+#![no_std]
 #![feature(specialization)]
 use core::ops::Deref;
 
