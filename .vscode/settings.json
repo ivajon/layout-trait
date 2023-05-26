@@ -1,7 +1,3 @@
 {
-  "cSpell.ignoreWords": [
-    "heapless",
-    "struct",
-    "usize"
-  ]
+  "cSpell.ignoreWords": ["RTIC", "heapless", "struct", "usize"]
 }
