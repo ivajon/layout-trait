@@ -22,6 +22,7 @@ impl<T> GetLayout for T {
             })
             .unwrap();
 
+        println!("T::");
         T::get_layout_type(layout);
     }
 }
@@ -32,10 +33,11 @@ where
 {
     fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
         println!("--- impl<T, U> GetLayout for T Deref ---");
+        let data = self.deref();
         layout
             .push(Layout {
-                address: self.deref() as *const _ as usize,
-                size: core::mem::size_of_val(self.deref()),
+                address: data as *const _ as usize,
+                size: core::mem::size_of_val(data),
             })
             .unwrap();
     }
@@ -64,10 +66,11 @@ where
         // hopefully there is a better way to do this
         // for now we crate a &ZST out of thin air!!!
         let t: &T = unsafe { core::mem::transmute(&()) };
+        let data = t.deref();
         layout
             .push(Layout {
-                address: t.deref() as *const _ as usize,
-                size: core::mem::size_of_val(t.deref()),
+                address: data as *const _ as usize,
+                size: core::mem::size_of_val(data),
             })
             .unwrap();
     }
