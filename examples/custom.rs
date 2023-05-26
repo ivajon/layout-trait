@@ -15,7 +15,7 @@ struct RegisterBlock {
 impl Deref for Proxy {
     type Target = RegisterBlock;
     fn deref(&self) -> &Self::Target {
-        println!("--- Proxy deref ---");
+        // println!("--- Proxy deref ---");
         unsafe { &*(0x1000 as *const RegisterBlock) }
     }
 }

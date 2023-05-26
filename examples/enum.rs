@@ -15,7 +15,7 @@ struct RegisterBlock {
 impl Deref for Proxy {
     type Target = RegisterBlock;
     fn deref(&self) -> &Self::Target {
-        println!("--- Proxy deref ---");
+        // println!("--- Proxy deref ---");
         unsafe { &*(0x1000 as *const RegisterBlock) }
     }
 }
@@ -35,7 +35,6 @@ impl GetLayoutType for Enum {
 }
 
 fn main() {
-    //  let d = Enum::B(0);
     let d = Enum::A(Proxy {});
     let mut layout: Vec<Layout, 8> = Vec::new();
     d.get_layout(&mut layout);

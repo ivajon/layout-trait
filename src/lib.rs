@@ -14,7 +14,7 @@ pub trait GetLayout {
 
 impl<T> GetLayout for T {
     default fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
-        println!("--- default GetLayout for T ---");
+        // println!("--- default GetLayout for T ---");
         layout
             .push(Layout {
                 address: self as *const _ as usize,
@@ -22,7 +22,7 @@ impl<T> GetLayout for T {
             })
             .unwrap();
 
-        println!("T::");
+        // println!("T::");
         T::get_layout_type(layout);
     }
 }
@@ -32,7 +32,7 @@ where
     T: Deref<Target = U>,
 {
     fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>) {
-        println!("--- deref GetLayout for T ---");
+        // println!("--- deref GetLayout for T ---");
         let data = self.deref();
         layout
             .push(Layout {
@@ -51,7 +51,7 @@ impl<T> GetLayoutType for T {
     // by default this does nothing
     // we override this for enums/unions
     default fn get_layout_type<const N: usize>(_layout: &mut heapless::Vec<Layout, N>) {
-        println!("--- default GetLayoutType for T ---");
+        // println!("--- default GetLayoutType for T ---");
     }
 }
 
@@ -61,7 +61,7 @@ where
     T: Deref<Target = U>,
 {
     default fn get_layout_type<const N: usize>(layout: &mut heapless::Vec<Layout, N>) {
-        println!("--- deref GetLayoutType for T ---");
+        // println!("--- deref GetLayoutType for T ---");
 
         // hopefully there is a better way to do this
         // for now we crate a &ZST out of thin air!!!
