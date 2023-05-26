@@ -1,10 +1,10 @@
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![feature(specialization)]
 use core::ops::Deref;
 
 pub use heapless;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Layout {
     pub address: usize,
     pub size: usize,
@@ -86,8 +86,8 @@ mod test {
 
     #[derive(Debug)]
     struct RegisterBlock {
-        reg1: u32,
-        reg2: u32,
+        _reg1: u32,
+        _reg2: u32,
     }
 
     struct Proxy {}
