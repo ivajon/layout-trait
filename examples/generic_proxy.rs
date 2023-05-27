@@ -19,43 +19,32 @@ impl Deref for Proxy1 {
     }
 }
 
-struct Tuple(u32, Proxy1);
+struct Generic<T> {
+    generic: T,
+}
 
-impl layout_trait::GetLayout for Tuple {
+impl<T> layout_trait::GetLayout for Generic<T> {
     fn get_layout<const N: usize>(
         &self,
         layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
     ) {
-        self.0.get_layout(layout);
-        self.1.get_layout(layout);
+        self.generic.get_layout(layout);
     }
 }
 
-impl layout_trait::GetLayoutType for Tuple {
+impl<T> layout_trait::GetLayoutType for Generic<T> {
     fn get_layout_type<const N: usize>(
         layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
     ) {
-        u32::get_layout_type(layout);
-        Proxy1::get_layout_type(layout);
-    }
-}
-enum Enum {
-    A(Tuple),
-}
-
-impl layout_trait::GetLayoutType for Enum {
-    fn get_layout_type<const N: usize>(
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        Tuple::get_layout_type(layout);
+        T::get_layout_type(layout);
     }
 }
 
 fn main() {
     let mut layout: Vec<layout_trait::Layout, 8> = Vec::new();
 
-    let a = Enum::A(Tuple(0, Proxy1 {}));
+    let a = Generic { generic: Proxy1 {} };
 
     a.get_layout(&mut layout);
-    println!("{:?}", layout);
+    println!("{:#x?}", layout);
 }

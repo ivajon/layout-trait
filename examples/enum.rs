@@ -1,4 +1,4 @@
-#![feature(specialization)]
+#![feature(min_specialization)]
 use core::ops::Deref;
 
 use heapless::Vec;
@@ -8,8 +8,8 @@ struct Proxy {}
 
 #[derive(Debug)]
 struct RegisterBlock {
-    reg1: u32,
-    reg2: u32,
+    _reg1: u32,
+    _reg2: u32,
 }
 
 impl Deref for Proxy {
@@ -22,6 +22,7 @@ impl Deref for Proxy {
 
 enum Enum {
     A(Proxy),
+    #[allow(unused)]
     B(u32, u32),
 }
 
