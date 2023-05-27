@@ -57,5 +57,5 @@ fn main() {
     let a = Enum::A(Tuple(0, Proxy1 {}));
 
     a.get_layout(&mut layout);
-    println!("{:?}", layout);
+    println!("{:#x?}", layout);
 }

@@ -39,5 +39,5 @@ fn main() {
     let d = Enum::A(Proxy {});
     let mut layout: Vec<Layout, 8> = Vec::new();
     d.get_layout(&mut layout);
-    println!("{:?}", layout);
+    println!("{:#x?}", layout);
 }
