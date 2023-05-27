@@ -128,7 +128,8 @@ fn test_simple() {
 
 Notice here, in this case, the `data` will be allocated on the stack, thus the `Layout.address` will vary depending on the stack frame location (and hence not asserted). In the case of tracking the location of RTIC resources, these will be statically allocated and thus their layout will be stable and the `Layout` can be used for MPU supported run-time verification.
 
----
+--- 
+
 
 ## layout-derive
 
@@ -137,6 +138,13 @@ For convenience, a custom derive macro is provided by [layout-derive](git@github
 In the `layout-derive` crate you find further examples (including memory layout of real-life peripherals for the ESP32C3).
 
 ---
+
+## examples
+
+Under examples you find a set of representative use cases. Some of the examples are replicated in the `layout-derive` crate, and used as reference for expected expansions.
+
+---
+
 
 ## License
 

@@ -104,7 +104,7 @@ mod test {
         let data: u32 = 32;
         let mut layout: Vec<Layout, 8> = Vec::new();
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         assert!(layout[0].size == 4)
     }
@@ -115,7 +115,7 @@ mod test {
 
         let mut layout: Vec<Layout, 8> = Vec::new();
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         assert!(layout[0].size == 64)
     }
@@ -139,7 +139,7 @@ mod test {
         let data = Simple { data: 0, data2: 0 };
         let mut layout: Vec<Layout, 8> = Vec::new();
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         assert!(layout[0].size == 4);
         assert!(layout[1].size == 8);
@@ -168,7 +168,7 @@ mod test {
 
         let mut layout: Vec<Layout, 8> = Vec::new();
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         assert!(layout[0].size == 4);
         assert!(layout[1].size == 8);
@@ -197,12 +197,12 @@ mod test {
 
         let mut layout: Vec<Layout, 8> = Vec::new();
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         let mut layout: Vec<Layout, 8> = Vec::new();
         data = Enum::B(1);
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         // the B variant location
         if let Enum::B(ref x) = data {
@@ -213,7 +213,7 @@ mod test {
         let mut layout: Vec<Layout, 8> = Vec::new();
         data = Enum::C(Proxy {});
         data.get_layout(&mut layout);
-        println!("{:?}", layout);
+        println!("{:#x?}", layout);
 
         if let Enum::C(ref c) = data {
             println!("Enum::C {}", c as *const _ as usize);
