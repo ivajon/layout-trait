@@ -5,7 +5,7 @@ use core::ops::Deref;
 pub use heapless;
 
 #[cfg(feature = "derive")]
-pub use layout_derive::Layout;
+pub use layout_derive::Layout as DeriveLayout;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Layout {
