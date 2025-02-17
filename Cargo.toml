@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 heapless = "0.7.16"
+layout-derive = {git = "https://github.com/perlindgren/layout-derive", optional = true}
+
+[features]
+derive=["dep:layout-derive"]
