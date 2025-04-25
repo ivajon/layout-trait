@@ -33,6 +33,11 @@ impl GetLayoutType for Enum {
         u32::get_layout_type(layout);
         u32::get_layout_type(layout);
     }
+    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+        Proxy::get_layout_type_callback(f);
+        u32::get_layout_type_callback(f);
+        u32::get_layout_type_callback(f);
+    }
 }
 
 fn main() {

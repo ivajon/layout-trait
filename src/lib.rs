@@ -14,6 +14,8 @@ pub struct Layout {
 }
 pub trait GetLayout {
     fn get_layout<const N: usize>(&self, layout: &mut heapless::Vec<Layout, N>);
+
+    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F);
 }
 
 impl<T> GetLayout for T {
@@ -28,6 +30,10 @@ impl<T> GetLayout for T {
 
         // println!("T::");
         T::get_layout_type(layout);
+    }
+
+    default fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+        f(self as *const _ as usize, core::mem::size_of_val(self))
     }
 }
 
@@ -45,10 +51,15 @@ where
             })
             .unwrap();
     }
+
+    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+        f(self as *const _ as usize, core::mem::size_of_val(self))
+    }
 }
 
 pub trait GetLayoutType {
     fn get_layout_type<const N: usize>(layout: &mut heapless::Vec<Layout, N>);
+    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F);
 }
 
 impl<T> GetLayoutType for T {
@@ -56,6 +67,11 @@ impl<T> GetLayoutType for T {
     // we override this for enums/unions
     default fn get_layout_type<const N: usize>(_layout: &mut heapless::Vec<Layout, N>) {
         // println!("--- default GetLayoutType for T ---");
+    }
+
+    default fn get_layout_type_callback<F: Fn(usize, usize)>(_f: &F) {
+        // by default this does nothing
+        // we override this for enums/unions
     }
 }
 
@@ -77,6 +93,15 @@ where
                 size: core::mem::size_of_val(data),
             })
             .unwrap();
+    }
+
+    default fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+        // hopefully there is a better way to do this
+        // for now we crate a &ZST out of thin air!!!
+        let t: &T = unsafe { core::mem::transmute(&()) };
+        let data = t.deref();
+
+        f(data as *const _ as usize, core::mem::size_of_val(data))
     }
 }
 
@@ -135,6 +160,10 @@ mod test {
             self.data.get_layout(layout);
             self.data2.get_layout(layout);
         }
+        fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+            self.data.get_layout_callback(f);
+            self.data2.get_layout_callback(f);
+        }
     }
 
     #[test]
@@ -159,6 +188,10 @@ mod test {
             // get_layout is executed on each field
             self.simple.get_layout(layout);
             self.data2.get_layout(layout);
+        }
+        fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+            self.simple.get_layout_callback(f);
+            self.data2.get_layout_callback(f);
         }
     }
 
@@ -190,6 +223,11 @@ mod test {
             println!("--- GetLayoutType for Enum ---");
             u32::get_layout_type(layout);
             Proxy::get_layout_type(layout);
+        }
+
+        fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+            u32::get_layout_type_callback(f);
+            Proxy::get_layout_type_callback(f);
         }
     }
 

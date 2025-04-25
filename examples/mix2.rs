@@ -29,6 +29,11 @@ impl layout_trait::GetLayout for Tuple {
         self.0.get_layout(layout);
         self.1.get_layout(layout);
     }
+
+    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+        self.0.get_layout_callback(f);
+        self.1.get_layout_callback(f);
+    }
 }
 
 impl layout_trait::GetLayoutType for Tuple {
@@ -37,6 +42,10 @@ impl layout_trait::GetLayoutType for Tuple {
     ) {
         u32::get_layout_type(layout);
         Proxy1::get_layout_type(layout);
+    }
+    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+        u32::get_layout_type_callback(f);
+        Proxy1::get_layout_type_callback(f);
     }
 }
 enum Enum {
@@ -48,6 +57,10 @@ impl layout_trait::GetLayoutType for Enum {
         layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
     ) {
         Tuple::get_layout_type(layout);
+    }
+
+    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+        Tuple::get_layout_type_callback(f);
     }
 }
 

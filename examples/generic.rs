@@ -14,6 +14,9 @@ impl<T> layout_trait::GetLayout for Generic<T> {
     ) {
         self.generic.get_layout(layout);
     }
+    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+        self.generic.get_layout_callback(f);
+    }
 }
 
 impl<T> layout_trait::GetLayoutType for Generic<T> {
@@ -21,6 +24,9 @@ impl<T> layout_trait::GetLayoutType for Generic<T> {
         layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
     ) {
         T::get_layout_type(layout);
+    }
+    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+        T::get_layout_type_callback(f);
     }
 }
 

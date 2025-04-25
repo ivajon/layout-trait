@@ -16,6 +16,10 @@ impl<T1, T2> layout_trait::GetLayout for Generic<T1, T2> {
         self.generic1.get_layout(layout);
         self.generic2.get_layout(layout);
     }
+    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+        self.generic2.get_layout_callback(f);
+        self.generic1.get_layout_callback(f);
+    }
 }
 
 impl<T1, T2> layout_trait::GetLayoutType for Generic<T1, T2> {
@@ -24,6 +28,10 @@ impl<T1, T2> layout_trait::GetLayoutType for Generic<T1, T2> {
     ) {
         T1::get_layout_type(layout);
         T2::get_layout_type(layout);
+    }
+    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+        T1::get_layout_type_callback(f);
+        T2::get_layout_type_callback(f);
     }
 }
 

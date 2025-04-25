@@ -31,6 +31,10 @@ impl GetLayout for Custom {
         self.proxy.get_layout(layout);
         self.b.get_layout(layout);
     }
+    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
+        self.proxy.get_layout_callback(f);
+        self.b.get_layout_callback(f);
+    }
 }
 
 fn main() {
