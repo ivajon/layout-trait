@@ -22,28 +22,14 @@ impl Deref for Proxy1 {
 struct Tuple(u32, Proxy1);
 
 impl layout_trait::GetLayout for Tuple {
-    fn get_layout<const N: usize>(
-        &self,
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        self.0.get_layout(layout);
-        self.1.get_layout(layout);
-    }
-
-    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
-        self.0.get_layout_callback(f);
-        self.1.get_layout_callback(f);
+    fn get_layout<F: FnMut(usize, usize)>(&self, f: &mut F) {
+        self.0.get_layout(f);
+        self.1.get_layout(f);
     }
 }
 
 impl layout_trait::GetLayoutType for Tuple {
-    fn get_layout_type<const N: usize>(
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        u32::get_layout_type(layout);
-        Proxy1::get_layout_type(layout);
-    }
-    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
         u32::get_layout_type_callback(f);
         Proxy1::get_layout_type_callback(f);
     }
@@ -53,22 +39,20 @@ enum Enum {
 }
 
 impl layout_trait::GetLayoutType for Enum {
-    fn get_layout_type<const N: usize>(
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        Tuple::get_layout_type(layout);
-    }
-
-    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
         Tuple::get_layout_type_callback(f);
     }
 }
 
 fn main() {
-    let mut layout: Vec<layout_trait::Layout, 8> = Vec::new();
-
     let a = Enum::A(Tuple(0, Proxy1 {}));
 
-    a.get_layout(&mut layout);
+    let mut layout: Vec<Layout, 8> = Vec::new();
+    let mut callback = |ptr, size| {
+        layout
+            .push(Layout { address: ptr, size })
+            .expect("Propper size")
+    };
+    a.get_layout(&mut callback);
     println!("{:#x?}", layout);
 }

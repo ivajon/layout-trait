@@ -28,12 +28,7 @@ enum Enum {
 
 // emulate custom derive
 impl GetLayoutType for Enum {
-    fn get_layout_type<const N: usize>(layout: &mut Vec<Layout, N>) {
-        Proxy::get_layout_type(layout);
-        u32::get_layout_type(layout);
-        u32::get_layout_type(layout);
-    }
-    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
         Proxy::get_layout_type_callback(f);
         u32::get_layout_type_callback(f);
         u32::get_layout_type_callback(f);
@@ -43,6 +38,11 @@ impl GetLayoutType for Enum {
 fn main() {
     let d = Enum::A(Proxy {});
     let mut layout: Vec<Layout, 8> = Vec::new();
-    d.get_layout(&mut layout);
+    let mut callback = |ptr, size| {
+        layout
+            .push(Layout { address: ptr, size })
+            .expect("Propper size")
+    };
+    d.get_layout(&mut callback);
     println!("{:#x?}", layout);
 }

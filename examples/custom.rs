@@ -27,13 +27,9 @@ struct Custom {
 
 // emulate custom derive
 impl GetLayout for Custom {
-    fn get_layout<const N: usize>(&self, layout: &mut Vec<Layout, N>) {
-        self.proxy.get_layout(layout);
-        self.b.get_layout(layout);
-    }
-    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
-        self.proxy.get_layout_callback(f);
-        self.b.get_layout_callback(f);
+    fn get_layout<F: FnMut(usize, usize)>(&self, f: &mut F) {
+        self.proxy.get_layout(f);
+        self.b.get_layout(f);
     }
 }
 
@@ -43,6 +39,11 @@ fn main() {
         b: 0,
     };
     let mut layout: Vec<Layout, 8> = Vec::new();
-    d.get_layout(&mut layout);
+    let mut callback = |ptr, size| {
+        layout
+            .push(Layout { address: ptr, size })
+            .expect("Propper size")
+    };
+    d.get_layout(&mut callback);
     println!("{:#x?}", layout);
 }

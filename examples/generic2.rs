@@ -9,27 +9,14 @@ struct Generic<T1, T2> {
 }
 
 impl<T1, T2> layout_trait::GetLayout for Generic<T1, T2> {
-    fn get_layout<const N: usize>(
-        &self,
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        self.generic1.get_layout(layout);
-        self.generic2.get_layout(layout);
-    }
-    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
-        self.generic2.get_layout_callback(f);
-        self.generic1.get_layout_callback(f);
+    fn get_layout<F: FnMut(usize, usize)>(&self, f: &mut F) {
+        self.generic2.get_layout(f);
+        self.generic1.get_layout(f);
     }
 }
 
 impl<T1, T2> layout_trait::GetLayoutType for Generic<T1, T2> {
-    fn get_layout_type<const N: usize>(
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        T1::get_layout_type(layout);
-        T2::get_layout_type(layout);
-    }
-    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
         T1::get_layout_type_callback(f);
         T2::get_layout_type_callback(f);
     }
@@ -43,6 +30,11 @@ fn main() {
         generic2: 1u64,
     };
 
-    a.get_layout(&mut layout);
+    let mut callback = |ptr, size| {
+        layout
+            .push(Layout { address: ptr, size })
+            .expect("Propper size")
+    };
+    a.get_layout(&mut callback);
     println!("{:#x?}", layout);
 }

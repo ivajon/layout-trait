@@ -24,24 +24,13 @@ struct Generic<T> {
 }
 
 impl<T> layout_trait::GetLayout for Generic<T> {
-    fn get_layout<const N: usize>(
-        &self,
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        self.generic.get_layout(layout);
-    }
-    fn get_layout_callback<F: Fn(usize, usize)>(&self, f: &F) {
-        self.generic.get_layout_callback(f);
+    fn get_layout<F: FnMut(usize, usize)>(&self, f: &mut F) {
+        self.generic.get_layout(f);
     }
 }
 
 impl<T> layout_trait::GetLayoutType for Generic<T> {
-    fn get_layout_type<const N: usize>(
-        layout: &mut layout_trait::heapless::Vec<layout_trait::Layout, N>,
-    ) {
-        T::get_layout_type(layout);
-    }
-    fn get_layout_type_callback<F: Fn(usize, usize)>(f: &F) {
+    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
         T::get_layout_type_callback(f);
     }
 }
@@ -51,6 +40,7 @@ fn main() {
 
     let a = Generic { generic: Proxy1 {} };
 
-    a.get_layout(&mut layout);
+    let mut callback = |address, size| layout.push(Layout { address, size }).expect("Valid size");
+    a.get_layout(&mut callback);
     println!("{:#x?}", layout);
 }
