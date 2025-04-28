@@ -29,9 +29,9 @@ impl layout_trait::GetLayout for Tuple {
 }
 
 impl layout_trait::GetLayoutType for Tuple {
-    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
-        u32::get_layout_type_callback(f);
-        Proxy1::get_layout_type_callback(f);
+    fn get_layout_type<F: FnMut(usize, usize)>(f: &mut F) {
+        u32::get_layout_type(f);
+        Proxy1::get_layout_type(f);
     }
 }
 enum Enum {
@@ -39,8 +39,8 @@ enum Enum {
 }
 
 impl layout_trait::GetLayoutType for Enum {
-    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
-        Tuple::get_layout_type_callback(f);
+    fn get_layout_type<F: FnMut(usize, usize)>(f: &mut F) {
+        Tuple::get_layout_type(f);
     }
 }
 

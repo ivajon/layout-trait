@@ -20,19 +20,11 @@ impl Deref for Proxy {
     }
 }
 
+#[derive(DeriveLayout)]
 enum Enum {
     A(Proxy),
     #[allow(unused)]
     B(u32, u32),
-}
-
-// emulate custom derive
-impl GetLayoutType for Enum {
-    fn get_layout_type<F: FnMut(usize, usize)>(f: &mut F) {
-        Proxy::get_layout_type(f);
-        u32::get_layout_type(f);
-        u32::get_layout_type(f);
-    }
 }
 
 fn main() {
@@ -44,5 +36,14 @@ fn main() {
             .expect("Propper size")
     };
     d.get_layout(&mut callback);
-    println!("{:#x?}", layout);
+    println!("Variant A : {:#x?}", layout);
+    let d = Enum::B(32, 1234);
+    let mut layout: Vec<Layout, 8> = Vec::new();
+    let mut callback = |ptr, size| {
+        layout
+            .push(Layout { address: ptr, size })
+            .expect("Propper size")
+    };
+    d.get_layout(&mut callback);
+    println!("Variant B {:#x?}", layout);
 }

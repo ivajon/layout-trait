@@ -16,9 +16,9 @@ impl<T1, T2> layout_trait::GetLayout for Generic<T1, T2> {
 }
 
 impl<T1, T2> layout_trait::GetLayoutType for Generic<T1, T2> {
-    fn get_layout_type_callback<F: FnMut(usize, usize)>(f: &mut F) {
-        T1::get_layout_type_callback(f);
-        T2::get_layout_type_callback(f);
+    fn get_layout_type<F: FnMut(usize, usize)>(f: &mut F) {
+        T1::get_layout_type(f);
+        T2::get_layout_type(f);
     }
 }
 

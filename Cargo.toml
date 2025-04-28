@@ -14,3 +14,4 @@ heapless = "0.8.x"
 
 [features]
 derive=["dep:layout-derive"]
+default = ["derive"]
