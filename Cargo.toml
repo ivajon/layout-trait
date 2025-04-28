@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-layout-derive = {git = "https://github.com/perlindgren/layout-derive", optional = true}
+layout-derive = {git = "https://github.com/ivajon/layout-derive", optional = true}
 
 [dev-dependencies]
 heapless = "0.8.x"

@@ -1,5 +1,6 @@
 #![cfg_attr(not(test), no_std)]
 #![feature(specialization)]
+#![allow(incomplete_features)]
 use core::ops::Deref;
 
 #[cfg(feature = "derive")]
@@ -10,6 +11,7 @@ pub struct Layout {
     pub address: usize,
     pub size: usize,
 }
+
 pub trait GetLayout {
     fn get_layout<F: FnMut(usize, usize)>(&self, f: &mut F);
 }
@@ -20,7 +22,7 @@ impl<T> GetLayout for T {
     }
 }
 
-impl<T, U> GetLayout for T
+impl<T, U: GetLayout> GetLayout for T
 where
     T: Deref<Target = U>,
 {
@@ -59,6 +61,8 @@ where
 
 #[cfg(test)]
 mod test {
+    use core::{cell::UnsafeCell, mem::MaybeUninit};
+
     use crate::*;
     use heapless::Vec;
 
@@ -176,7 +180,65 @@ mod test {
         assert!(layout[1].size == 8);
         assert!(layout[2].size == 8); // Proxy size
         assert!(layout[2].address == 0x1000); // Proxy address
+        let data = Complex {
+            simple: Simple { data: 0, data2: 0 },
+            data2: Proxy {},
+        };
+        let data = MaybeUninit::new(data);
+
+        let mut layout: Vec<Layout, 8> = Vec::new();
+        let mut callback = |ptr, size| {
+            layout
+                .push(Layout { address: ptr, size })
+                .expect("Propper capacity")
+        };
+        data.get_layout(&mut callback);
+        println!("{:#x?}", layout);
+
+        assert!(layout[0].size == 4);
+        assert!(layout[1].size == 8);
+        assert!(layout[2].size == 8); // Proxy size
+        assert!(layout[2].address == 0x1000); // Proxy address
+        let data = UnsafeCell::new(MaybeUninit::new(data));
+
+        let mut layout: Vec<Layout, 8> = Vec::new();
+        let mut callback = |ptr, size| {
+            layout
+                .push(Layout { address: ptr, size })
+                .expect("Propper capacity")
+        };
+        data.get_layout(&mut callback);
+        println!("{:#x?}", layout);
+
+        assert!(layout[0].size == 4);
+        assert!(layout[1].size == 8);
+        assert!(layout[2].size == 8); // Proxy size
+        assert!(layout[2].address == 0x1000); // Proxy address
     }
+
+    // #[test]
+    // fn test_complex_indirect() {
+    //     let data = Complex {
+    //         simple: Simple { data: 0, data2: 0 },
+    //         data2: Proxy {},
+    //     };
+    //     let data = UnsafeCell::new(MaybeUninit::new(data));
+    //     let uninit: MaybeUninit<_> = unsafe { *(data.get() as *const _) };
+    //
+    //     let mut layout: Vec<Layout, 8> = Vec::new();
+    //     let mut callback = |ptr, size| {
+    //         layout
+    //             .push(Layout { address: ptr, size })
+    //             .expect("Propper capacity")
+    //     };
+    //     data.get_layout(&mut callback);
+    //     println!("{:#x?}", layout);
+    //
+    //     assert!(layout[0].size == 4);
+    //     assert!(layout[1].size == 8);
+    //     assert!(layout[2].size == 8); // Proxy size
+    //     assert!(layout[2].address == 0x1000); // Proxy address
+    // }
     enum Enum {
         A,
         B(u32),

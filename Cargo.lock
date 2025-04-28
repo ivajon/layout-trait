@@ -79,7 +79,7 @@ dependencies = [
 [[package]]
 name = "layout-derive"
 version = "0.1.0"
-source = "git+https://github.com/perlindgren/layout-derive#fd75c349bcb79a359b06bb9031f0d8088e45c670"
+source = "git+https://github.com/ivajon/layout-derive#3502c281f331f730df21ec5dd1973e030779b890"
 dependencies = [
  "either",
  "layout-trait 0.1.0 (git+https://github.com/perlindgren/layout-trait.git)",
